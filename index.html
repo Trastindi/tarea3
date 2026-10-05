@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="./styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Pokedex</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <button id="back">Atras</button>
+                </div>
+                <div class="col-4">
+                    <form class="container" id="form1">
+                        <input type="text" name="pokemonId" id="pokemonId"/>
+                        <button type="submit">Buscar</button>
+
+                    </form>
+                </div>
+                <div class="col-4">
+                    <button id="next">Siguiente</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4 offset-4">
+                    <h1 id="pokemonName" class="text-center">Nombre Pokemon</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <img id="pokemonSprite" style="height: 430px; width: 430px;" src="" alt="">
+                    <div class="row">
+                        <div class="stats-card">
+                            <h3>Puntos de base</h3>
+
+                            <div id="pokemonStats" class="pokemon-stats"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <p id="pokemonDescription">
+                        </p>
+                    </div>
+                    <div class="row">
+                        <p class="col-2">Version: </p>
+                        <div class="col-10">
+                            <input type="radio" id="version" name="drone" value="0" checked />
+                            <label for="huey">
+                                <img src="./img/pokeball_red.png" alt="" style="height: 30px; width: 30px;">
+                            </label>
+                            <input type="radio" id="version" name="drone" value="1" />
+                            <label for="blue">
+                                <img src="./img/pokeball_blue.png" alt="" style="height: 30px; width: 30px;">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row data-card">
+                        <div class="col-6">
+                            <ul class="no-style-list">
+                                <li>
+                                    <span class="text-white attribute-title">Altura</span>
+                                    <span id="altura" class="attribute-value"></span>
+                                </li>
+                                <li>
+                                    <span class="text-white attribute-title">Peso</span>
+                                    <span id="peso" class="attribute-value"></span>
+                                </li>
+                                <li>
+                                    <span class="text-white attribute-title">Sexo</span>
+                                    <span id="sexo" class="attribute-value"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="no-style-list">
+                                <li>
+                                    <span class="text-white attribute-title">Categoría</span>
+                                    <span id="categoria" class="attribute-value"></span>
+                                </li>
+                                <li>
+                                    <span class="text-white attribute-title">Habilidad</span>
+                                    <div class="col-12" id="habilidad"></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Tipo</span>
+                        <div id="tipo" class="row">
+                        </div>
+
+                        <span>Debilidades</span>
+                        <div id="debilidad" class="row">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <script type="module" src="./scripts.js"></script>
+    </footer>
+</body>
+
+</html>

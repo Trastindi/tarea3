@@ -1,0 +1,111 @@
+@import url("./node_modules/bootstrap/dist/css/bootstrap.min.css");
+@import url(./css/types.css);
+
+.data-card {
+    background-color: #30a7d7;
+    padding: 20px;
+}
+
+.match-data-card-size {
+    height: 100%;
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-white {
+    color: white;
+}
+
+.no-style-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.attribute-title {
+    clear: both;
+    color: #fff;
+    float: left;
+    font-size: 100%;
+    margin: 1.25em 0 0 1.25em;
+    text-transform: none;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.attribute-value {
+    clear: both;
+    color: #212121;
+    float: left;
+    font-size: 125%;
+    margin: 0.75em 1.5em 0 1em;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.stats-card {
+    max-width: 520px;
+    margin: 20px auto;
+    padding: 16px 20px;
+    background-color: #a6a6a6;
+    border-radius: 10px;
+}
+
+.stats-card h3 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #252525;
+}
+
+.pokemon-stats {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(45px, 1fr));
+    gap: 8px;
+    align-items: end;
+}
+
+.stat-column {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-total {
+    min-height: 20px;
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.stat-bars {
+    display: flex;
+    width: 100%;
+    height: 170px;
+    flex-direction: column-reverse;
+    gap: 3px;
+}
+
+.stat-line {
+    width: 100%;
+    height: 13px;
+    background-color: #f2f2f2;
+}
+
+.stat-line.active {
+    background-color: #27a8d8;
+}
+
+.stat-name {
+    min-height: 30px;
+    margin-top: 7px;
+    color: #222;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.05;
+    text-align: center;
+}
