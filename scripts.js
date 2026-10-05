@@ -1,194 +1,430 @@
-import * as pokeApi from "./pokeApi/api.js"
-import * as bootstrap from "./node_modules/bootstrap/dist/js/bootstrap.min.js";
+import * as pokeApi from "./pokeApi/api.js";
 
+const LIMIT = 1025;
 
-window.addEventListener("load", function () {
+const statLabels = {
+  hp: "PS",
+  attack: "ATAQUE",
+  defense: "DEFENSA",
+  "special-attack": "ATQ. ESP.",
+  "special-defense": "DEF. ESP.",
+  speed: "VELOCIDAD"
+};
 
-    /*QuerySelectorAll devuelve TODOS los elementos que cumplan el selector*/
-    let pokemonId = 1;
-    let pokemonName = document.querySelectorAll("#pokemonName");
-    let pokemonSprite = document.querySelectorAll("#pokemonSprite");
-    let pokemonDescription = document.querySelectorAll("#pokemonDescription");
-    let pokemonHeight = document.getElementById("altura");
-    let pokemonWeight = document.getElementById("peso");
-    let pokemonSex = document.getElementById("sexo");
-    let pokemonGenus = document.getElementById("categoria");
-    let pokemonAbility = document.getElementById("habilidad");
-    let pokemonTypes = document.getElementById("tipo");
-    let pokemonWeakness = document.getElementById("debilidad");
+const getById = (id) => document.getElementById(id);
 
-    /*Retorna SOLO el primer elemento que cumpla con tener el id ya que un id debe ser UNICO en el DOM*/
-    let form1 = document.getElementById("form1");
-    const pokemonIdInput = document.getElementById("pokemonId");
+const normaliseReference = (value) => {
+  const text = String(value ?? "").trim().toLowerCase();
 
-    let versions = document.querySelectorAll("#version")
-    let actualVersion = 0;
-    let pokemonSpeciesData;
+  if (!text) {
+    return null;
+  }
 
-    let siguiente = document.getElementById("next")
-    let atras = document.getElementById("back")
+  if (/^\d+$/.test(text)) {
+    return Math.min(LIMIT, Math.max(1, Number(text)));
+  }
 
-    const pokemonStats = document.getElementById("pokemonStats");
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-");
+};
 
-    const nombresStats = {
-        hp: "PS",
-        attack: "Ataque",
-        defense: "Defensa",
-        "special-attack": "Ataque especial",
-        "special-defense": "Defensa especial",
-        speed: "Velocidad"
-    };
+const capitalise = (value = "") =>
+  value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, " ");
 
-    versions.forEach(version => {
-        version.addEventListener('change', (e) => {
-            actualVersion = version.value;
-            pokemonDescription[0].textContent = pokemonSpeciesData.flavor_text_entries[actualVersion].flavor_text;
-        });
-    });
+const formatDexNumber = (id) => `#${String(id).padStart(3, "0")}`;
 
-    form1.addEventListener("submit", async function ($e) {
-        $e.preventDefault();
-        let formData = new FormData(this);
-        let pokemonNumber = formData.get("pokemonId");
-        await actualizarPokemon(pokemonNumber);
-    });
+const getLanguageEntry = (entries = [], language = "es") =>
+  entries.find((entry) => entry.language?.name === language) ??
+  entries.find((entry) => entry.language?.name === "en") ??
+  entries[0] ??
+  null;
 
+const clearText = (text = "") =>
+  text.replace(/[\n\f\r]/g, " ").replace(/\s+/g, " ").trim();
 
-    siguiente.addEventListener("click", async function (e) {
-        e.preventDefault();
-        const pokemonNumber = pokemonId >= 1025 ? 1 : pokemonId + 1;
+const getArtwork = (pokemon) =>
+  pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+  pokemon.sprites?.other?.home?.front_default ||
+  pokemon.sprites?.front_default ||
+  "";
 
-        pokemonIdInput.value = pokemonNumber;
+const getGender = (genderRate) => {
+  if (genderRate === -1) return "DESCONOCIDO";
+  if (genderRate === 0) return "♂";
+  if (genderRate === 8) return "♀";
+  return "♂ / ♀";
+};
 
-        await actualizarPokemon(pokemonNumber);
-    });
+const getGenus = (genera = []) => {
+  const genus = getLanguageEntry(genera)?.genus ?? "DESCONOCIDA";
+  return genus.replace(/\s*Pokémon\s*$/i, "").trim().toUpperCase();
+};
 
-    atras.addEventListener("click", async function (e) {
-        e.preventDefault();
-        
-        const pokemonNumber = pokemonId <= 1 ? 1025 : pokemonId - 1;
+const getStatSegments = (baseStat) =>
+  Math.max(0, Math.min(10, Math.ceil((baseStat / 255) * 10)));
 
-        pokemonIdInput.value = pokemonNumber;
+window.addEventListener("DOMContentLoaded", () => {
+  const form = getById("pokemonForm");
+  const input = getById("pokemonId");
 
-        await actualizarPokemon(pokemonNumber);
-    });
+  const previousButton = getById("back");
+  const nextButton = getById("next");
 
-    async function actualizarPokemon(pokemonNumber) {
-        let pokemonData = await pokeApi.getPokemonById(pokemonNumber);
-        pokemonId = pokemonData?.id || pokemonId; // Actualiza el ID solo si se encontró un Pokémon válido
-        
-        if (pokemonData === null) {
-            alert("No se encontró el Pokémon con el ID o nombre proporcionado.");
-            return;
-        }
+  const title = getById("pokemonTitle");
+  const headerTitle = getById("pokemonHeaderTitle");
+  const sprite = getById("pokemonSprite");
 
-        pokemonName[0].textContent = pokemonData.name;
-        pokemonSprite[0].src = pokemonData.sprites.front_default;
+  const height = getById("altura");
+  const weight = getById("peso");
+  const gender = getById("sexo");
+  const category = getById("categoria");
 
-        pokemonSpeciesData = await pokeApi.getPokemonSpeciesById(pokemonNumber);
-        pokemonDescription[0].textContent = pokemonSpeciesData.flavor_text_entries[actualVersion].flavor_text;
-        pokemonHeight.textContent = pokemonData.height / 10 + " m";
-        pokemonWeight.textContent = pokemonData.weight / 10 + " kg";
+  const typesContainer = getById("tipo");
+  const abilitiesContainer = getById("habilidad");
+  const weaknessesContainer = getById("debilidad");
+  const description = getById("pokemonDescription");
+  const statsContainer = getById("pokemonStats");
 
-        mostrarStats(pokemonData.stats);
+  const previousLabel = getById("previousPokemon");
+  const nextLabel = getById("nextPokemon");
+  const status = getById("pokemonStatus");
 
-        switch (pokemonSpeciesData.gender_rate) {
-            case -1:
-                pokemonSex.textContent = "Desconocido"
-                break;
-            case 0:
-                pokemonSex.textContent = "♂"
-                break;
-            case 1:
-            case 4:
-                pokemonSex.textContent = "♂ ♀"
-                break;
-            case 8:
-                pokemonSex.textContent = "♀"
-                break;
-            default:
-                break;
-        }
-        try {
-            pokemonGenus.textContent = pokemonSpeciesData.genera[7].genus;
-        }
-        catch (e) {
-            pokemonGenus.textContent = pokemonSpeciesData.genera[3].genus;
-        }
-        let habilidades = pokemonData.abilities;
-        pokemonAbility.innerHTML = ''
-        habilidades.forEach(habilidad => {
-            let ability = document.createElement('div')
-            ability.textContent = habilidad.ability.name
-            ability.classList.add('attribute-value')
-            pokemonAbility.append(ability)
-        })
-        pokemonTypes.innerHTML = ''
-        pokemonData.types.forEach(type => {
-            let typeElement = document.createElement('div')
-            typeElement.textContent = type.type.name
-            typeElement.classList.add('col-4', 'background-color-' + type.type.name, "text-center")
-            pokemonTypes.append(typeElement)
-        })
-        const [debilidades, fortalezas, nulos] = await pokeApi.getTypeTable(pokemonData.types);
-        const debilidadesFinales = pokeApi.filterWeakness(debilidades, fortalezas, nulos);
-        pokemonWeakness.innerHTML = ''
+  const numberButtons = [
+    ...document.querySelectorAll("[data-pokemon-number]")
+  ];
 
-        debilidadesFinales.forEach(debilidad => {
-            let debilidadElement = document.createElement('div')
-            debilidadElement.textContent = debilidad
-            debilidadElement.classList.add('col-4', 'background-color-' + debilidad, "text-center")
-            pokemonWeakness.append(debilidadElement)
-        })
-    };
+  const keypadActionButtons = [
+    ...document.querySelectorAll("[data-keypad-action]")
+  ];
 
-    function convertirStatABarras(baseStat) {
-        const totalLineas = 10;
+  const filterButtons = [
+    ...document.querySelectorAll("[data-type-filter]")
+  ];
 
-        // 255 es el máximo teórico habitual para un stat base de PokéAPI.
-        const barras = Math.ceil((baseStat / 255) * totalLineas);
+  let currentPokemonId = 25;
+  let currentPokemon = null;
+  let isLoading = false;
+  let keypadBuffer = "";
 
-        // Garantiza un valor entre 0 y 10.
-        return Math.max(0, Math.min(totalLineas, barras));
+  function setStatus(message) {
+    if (status) {
+      status.textContent = message;
+    }
+  }
+
+  function setControlsDisabled(disabled) {
+    [
+      previousButton,
+      nextButton,
+      ...numberButtons,
+      ...keypadActionButtons,
+      ...filterButtons
+    ]
+      .filter(Boolean)
+      .forEach((element) => {
+        element.disabled = disabled;
+        element.setAttribute("aria-busy", String(disabled));
+      });
+  }
+
+  function createTag(value, classPrefix) {
+    const tag = document.createElement("span");
+
+    const safeName = value.toLowerCase().replace(/\s+/g, "-");
+
+    tag.className = `${classPrefix}-tag ${classPrefix}-${safeName}`;
+    tag.textContent = value.toUpperCase();
+
+    return tag;
+  }
+
+  function renderTags(container, values, classPrefix) {
+    if (!container) return;
+
+    container.replaceChildren();
+
+    if (!values.length) {
+      container.textContent = "SIN DATOS";
+      return;
     }
 
-    function mostrarStats(stats) {
-        pokemonStats.innerHTML = "";
+    values.forEach((value) => {
+      container.append(createTag(value, classPrefix));
+    });
+  }
 
-        stats.forEach(stat => {
-            const baseStat = stat.base_stat;
-            const nombreStat = stat.stat.name;
+  function renderStats(stats) {
+    if (!statsContainer) return;
 
-            const nombreVisible = nombresStats[nombreStat] ?? nombreStat;
-            const barrasActivas = convertirStatABarras(baseStat);
+    statsContainer.replaceChildren();
 
-            const columna = document.createElement("div");
-            columna.classList.add("stat-column");
+    stats.forEach((stat) => {
+      const row = document.createElement("div");
+      row.className = "stat-row";
 
-            const total = document.createElement("div");
-            total.classList.add("stat-total");
-            total.textContent = baseStat;
+      const label = document.createElement("span");
+      label.className = "stat-label";
+      label.textContent =
+        statLabels[stat.stat.name] ?? stat.stat.name.toUpperCase();
 
-            const barras = document.createElement("div");
-            barras.classList.add("stat-bars");
+      const meter = document.createElement("span");
+      meter.className = "stat-meter";
+      meter.setAttribute(
+        "aria-label",
+        `${label.textContent}: ${stat.base_stat}`
+      );
 
-            for (let i = 0; i < 10; i++) {
-                const linea = document.createElement("div");
-                linea.classList.add("stat-line");
+      const segments = getStatSegments(stat.base_stat);
 
-                if (i < barrasActivas) {
-                    linea.classList.add("active");
-                }
+      for (let index = 0; index < 10; index += 1) {
+        const segment = document.createElement("i");
+        segment.className = `stat-segment${
+          index < segments ? " is-active" : ""
+        }`;
 
-                barras.append(linea);
-            }
+        meter.append(segment);
+      }
 
-            const nombre = document.createElement("div");
-            nombre.classList.add("stat-name");
-            nombre.textContent = nombreVisible;
+      const value = document.createElement("strong");
+      value.className = "stat-value";
+      value.textContent = stat.base_stat;
 
-            columna.append(total, barras, nombre);
-            pokemonStats.append(columna);
-        });
+      row.append(label, meter, value);
+      statsContainer.append(row);
+    });
+  }
+
+  async function calculateWeaknesses(types) {
+    try {
+      const [weaknesses, strengths, immunities] =
+        await pokeApi.getTypeTable(types);
+
+      return pokeApi.filterWeakness(weaknesses, strengths, immunities);
+    } catch (error) {
+      console.warn("No se pudieron calcular las debilidades.", error);
+      return [];
     }
+  }
+
+  async function updateNavigationLabels(pokemonId) {
+    const previousId = pokemonId <= 1 ? LIMIT : pokemonId - 1;
+    const nextId = pokemonId >= LIMIT ? 1 : pokemonId + 1;
+
+    if (previousLabel) {
+      previousLabel.textContent = `← ${formatDexNumber(previousId)}`;
+    }
+
+    if (nextLabel) {
+      nextLabel.textContent = `${formatDexNumber(nextId)} →`;
+    }
+  }
+
+  async function loadPokemon(reference) {
+    const pokemonReference = normaliseReference(reference);
+
+    if (!pokemonReference || isLoading) {
+      return;
+    }
+
+    isLoading = true;
+    document.body.classList.add("is-loading");
+    setControlsDisabled(true);
+    setStatus("ESCANEANDO…");
+
+    try {
+      const pokemon = await pokeApi.getPokemonById(pokemonReference);
+
+      if (!pokemon) {
+        throw new Error("Pokémon no encontrado");
+      }
+
+      const species = await pokeApi.getPokemonSpeciesById(pokemon.id);
+
+      currentPokemonId = pokemon.id;
+      currentPokemon = pokemon;
+
+      const dexNumber = formatDexNumber(pokemon.id);
+      const name = capitalise(pokemon.name);
+      const displayTitle = `${dexNumber} • ${name.toUpperCase()}`;
+
+      const speciesEntry = getLanguageEntry(species.flavor_text_entries);
+      const flavorText = clearText(
+        speciesEntry?.flavor_text ?? "SIN REGISTRO DISPONIBLE."
+      );
+
+      const types = pokemon.types.map((item) => item.type.name);
+      const abilities = pokemon.abilities.map((item) => item.ability.name);
+      const weaknesses = await calculateWeaknesses(pokemon.types);
+
+      if (title) title.textContent = displayTitle;
+      if (headerTitle) headerTitle.textContent = displayTitle;
+
+      if (sprite) {
+        sprite.src = getArtwork(pokemon);
+        sprite.alt = `Ilustración oficial de ${name}`;
+      }
+
+      if (height) height.textContent = `${pokemon.height / 10} M`;
+      if (weight) weight.textContent = `${pokemon.weight / 10} KG`;
+      if (gender) gender.textContent = getGender(species.gender_rate);
+      if (category) category.textContent = getGenus(species.genera);
+      if (description) description.textContent = flavorText;
+
+      renderTags(typesContainer, types, "type");
+      renderTags(abilitiesContainer, abilities, "ability");
+      renderTags(weaknessesContainer, weaknesses, "weakness");
+      renderStats(pokemon.stats);
+
+      if (input) {
+        input.value = pokemon.id;
+      }
+
+      await updateNavigationLabels(pokemon.id);
+
+      setStatus(`REGISTRO ${dexNumber} CARGADO`);
+    } catch (error) {
+      console.error(error);
+
+      setStatus("ERROR: REGISTRO NO ENCONTRADO");
+
+      if (description) {
+        description.textContent =
+          "NO SE HA PODIDO RECUPERAR EL REGISTRO SOLICITADO. REVISA EL NÚMERO O EL NOMBRE.";
+      }
+    } finally {
+      isLoading = false;
+      document.body.classList.remove("is-loading");
+      setControlsDisabled(false);
+    }
+  }
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    loadPokemon(input?.value);
+  });
+
+  input?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      loadPokemon(input.value);
+    }
+  });
+
+  previousButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const previousId = currentPokemonId <= 1 ? LIMIT : currentPokemonId - 1;
+    loadPokemon(previousId);
+  });
+
+  nextButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const nextId = currentPokemonId >= LIMIT ? 1 : currentPokemonId + 1;
+    loadPokemon(nextId);
+  });
+
+  numberButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const digit = button.dataset.pokemonNumber;
+
+      if (!/^\d$/.test(digit)) {
+        return;
+      }
+
+      keypadBuffer = `${keypadBuffer}${digit}`.slice(-4);
+
+      if (input) {
+        input.value = keypadBuffer;
+        input.focus();
+      }
+
+      setStatus(`ENTRADA: ${keypadBuffer}`);
+    });
+  });
+
+  keypadActionButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const action = button.dataset.keypadAction;
+
+      if (action === "clear") {
+        keypadBuffer = "";
+
+        if (input) {
+          input.value = "";
+          input.focus();
+        }
+
+        setStatus("ENTRADA BORRADA");
+        return;
+      }
+
+      if (action === "enter") {
+        const reference = keypadBuffer || input?.value;
+
+        keypadBuffer = "";
+        loadPokemon(reference);
+      }
+    });
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const requestedType = button.dataset.typeFilter;
+
+      filterButtons.forEach((filterButton) => {
+        const isActive = filterButton === button;
+
+        filterButton.classList.toggle("is-active", isActive);
+        filterButton.setAttribute("aria-pressed", String(isActive));
+      });
+
+      if (!currentPokemon || requestedType === "all") {
+        setStatus("FILTRO: TODOS LOS TIPOS");
+        return;
+      }
+
+      const containsType = currentPokemon.types.some(
+        (item) => item.type.name === requestedType
+      );
+
+      setStatus(
+        containsType
+          ? `FILTRO ${requestedType.toUpperCase()}: COINCIDENCIA`
+          : `FILTRO ${requestedType.toUpperCase()}: SIN COINCIDENCIA`
+      );
+    });
+  });
+
+  getById("voiceButton")?.addEventListener("click", () => {
+    setStatus("DEX VOICE: CANAL DE AUDIO NO DISPONIBLE");
+  });
+
+  getById("cryButton")?.addEventListener("click", () => {
+    if (!currentPokemon) {
+      return;
+    }
+
+    const cryUrl =
+      currentPokemon.cries?.latest || currentPokemon.cries?.legacy || "";
+
+    if (!cryUrl) {
+      setStatus("CRY SYNTH: AUDIO NO DISPONIBLE");
+      return;
+    }
+
+    const cry = new Audio(cryUrl);
+
+    cry.play()
+      .then(() => setStatus("CRY SYNTH: REPRODUCIENDO"))
+      .catch(() => setStatus("CRY SYNTH: BLOQUEADO POR EL NAVEGADOR"));
+  });
+
+  loadPokemon(currentPokemonId);
 });

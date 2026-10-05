@@ -3,286 +3,256 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#131313" />
-  <title>Kanto Pokédex OS</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
-    rel="stylesheet"
+  <meta
+    name="description"
+    content="Kanto OS: una Pokédex retro que consulta datos desde PokéAPI."
   />
-  <link
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet"
-  />
+  <title>Kanto OS · Pokédex</title>
 
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body>
-  <main class="app-shell">
+  <main class="kanto-os" aria-label="Pokédex Kanto OS">
     <header class="system-header">
-      <div class="brand-lockup">
-        <div class="brand-lights" aria-hidden="true">
-          <span class="brand-light light-red"></span>
-          <span class="brand-light light-amber"></span>
-          <span class="brand-light light-green"></span>
-        </div>
-
-        <div>
-          <p class="eyebrow">KANTO POKÉDEX OS v1.0.4</p>
-          <h1>POKÉDEX <span>MODEL HANDY909</span></h1>
-        </div>
+      <div class="sensor-cluster" aria-label="Indicadores del sistema">
+        <span class="sensor sensor-main" aria-hidden="true"></span>
+        <span class="sensor sensor-red" aria-hidden="true"></span>
+        <span class="sensor sensor-yellow" aria-hidden="true"></span>
+        <span class="sensor sensor-green" aria-hidden="true"></span>
       </div>
 
-      <nav class="system-nav" aria-label="Navegación principal">
-        <button class="nav-button is-active" type="button">KANTO DEX</button>
-        <button class="nav-button" type="button">TYPE MATCHUPS</button>
-        <button class="nav-button" type="button">CRIES ARCHIVE</button>
-        <button class="nav-button" type="button">DIAGNOSTICS</button>
-      </nav>
+      <div class="system-identification">
+        <p class="eyebrow">REPLICATOR UNIT // DUAL-BUS ARCH</p>
+        <h1>KANTO OS <span>•</span> HANDY909</h1>
+        <p class="system-subtitle">SCAN-CAM MATRIX</p>
+      </div>
+
+      <p id="pokemonStatus" class="system-status" aria-live="polite">
+        SISTEMA LISTO
+      </p>
     </header>
 
-    <section class="utility-bar" aria-label="Herramientas de búsqueda">
-      <div class="search-console">
-        <span class="material-icons" aria-hidden="true">search</span>
-        <label class="sr-only" for="pokemon-search">Buscar Pokémon</label>
+    <section class="search-console" aria-label="Buscar Pokémon">
+      <form id="pokemonForm" class="pokemon-search-form">
+        <label class="sr-only" for="pokemonId">Número o nombre de Pokémon</label>
+
         <input
-          id="pokemon-search"
+          id="pokemonId"
+          class="pokemon-search-input"
+          name="pokemon"
           type="search"
+          inputmode="numeric"
           autocomplete="off"
-          placeholder="ID / NAME"
+          spellcheck="false"
+          placeholder="ID / NOMBRE"
+          aria-describedby="searchHelp"
         />
-        <span class="search-range">001–151</span>
-      </div>
 
-      <div class="utility-actions">
-        <span class="voice-status">
-          <span class="status-dot"></span>
-          VOX READY
-        </span>
-        <button id="search-button" class="utility-button" type="button">
-          <span class="material-icons" aria-hidden="true">person_search</span>
-          SEARCH
+        <button type="submit" class="search-button">
+          BUSCAR
         </button>
-        <button id="reset-button" class="utility-button utility-button--danger" type="button">
-          <span class="material-icons" aria-hidden="true">restart_alt</span>
-          RESET
-        </button>
-      </div>
+      </form>
+
+      <span id="searchHelp" class="search-help">
+        INTRODUCE UN ID DEL 1 AL 1025 O UN NOMBRE
+      </span>
     </section>
 
-    <section class="filter-bar" aria-label="Filtros por tipo">
-      <p>FILTRO:</p>
-      <button class="filter-button is-selected" type="button" data-type="all">TODOS</button>
-      <button class="filter-button" type="button" data-type="grass">PLANTA</button>
-      <button class="filter-button" type="button" data-type="fire">FUEGO</button>
-      <button class="filter-button" type="button" data-type="water">AGUA</button>
-      <button class="filter-button" type="button" data-type="electric">ELÉC</button>
-      <button class="filter-button" type="button" data-type="psychic">PSI</button>
+    <nav class="type-filter-bar" aria-label="Filtrar por tipo">
+      <span class="filter-label">FILTRO:</span>
 
-      <button id="voice-button" class="voice-button" type="button">
-        <span class="material-icons" aria-hidden="true">volume_up</span>
-        VOZ DE DEXTER
+      <button type="button" class="type-filter is-active" data-type-filter="all" aria-pressed="true">
+        TODOS
       </button>
-    </section>
+      <button type="button" class="type-filter" data-type-filter="grass" aria-pressed="false">
+        PLANTA
+      </button>
+      <button type="button" class="type-filter" data-type-filter="fire" aria-pressed="false">
+        FUEGO
+      </button>
+      <button type="button" class="type-filter" data-type-filter="water" aria-pressed="false">
+        AGUA
+      </button>
+      <button type="button" class="type-filter" data-type-filter="electric" aria-pressed="false">
+        ELÉC.
+      </button>
+      <button type="button" class="type-filter" data-type-filter="psychic" aria-pressed="false">
+        PSI
+      </button>
+    </nav>
 
-    <section class="pokedex" aria-label="Pokédex">
-      <article class="pokedex-panel pokedex-panel--left">
-        <div class="sensor-strip">
-          <div class="sensor-dome" aria-hidden="true">
-            <span class="sensor-glint"></span>
-          </div>
-
-          <div class="led-cluster" aria-label="Indicadores de estado">
-            <span class="led led-red"></span>
-            <span class="led led-amber"></span>
-            <span class="led led-green"></span>
-          </div>
-
-          <p class="sensor-label">SENSOR CLUSTER<br />AND LOGO</p>
+    <section class="pokedex-shell" aria-label="Ficha del Pokémon">
+      <article class="pokedex-panel pokedex-panel-left">
+        <div class="panel-topline">
+          <span>REPLICATOR UNIT // DUAL-BUS ARCH</span>
+          <span>SCAN-CAM MATRIX</span>
         </div>
 
-        <div class="screen-housing">
-          <div class="screen-topline">
-            <span class="screen-led"></span>
-            <span class="screen-led"></span>
-            <span>REPLICATOR UNIT // DUAL-BUS ARCH</span>
+        <div class="lcd-screen lcd-screen-primary">
+          <div class="screen-heading">
+            <p class="screen-label">ID:</p>
+            <h2 id="pokemonTitle">#025 • PIKACHU</h2>
+            <p class="screen-mode">MODE: OPTIC-CAPTURE</p>
           </div>
 
-          <section class="lcd lcd--main">
-            <div class="lcd-status">
-              <span>KANTO OS • HANDY909</span>
-              <span id="scan-state">SCAN-CAM MATRIX</span>
-            </div>
+          <div class="sprite-frame">
+            <img
+              id="pokemonSprite"
+              class="pokemon-sprite"
+              src=""
+              alt="Ilustración del Pokémon seleccionado"
+            />
+          </div>
 
-            <div class="pokemon-artwork">
-              <img
-                id="pokemon-image"
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
-                alt="Pikachu"
-              />
-            </div>
+          <div class="sprite-navigation" aria-label="Navegación de Pokémon">
+            <button
+              id="back"
+              class="nav-button"
+              type="button"
+              aria-label="Pokémon anterior"
+            >
+              ◀
+            </button>
 
-            <div class="lcd-readout">
-              <p><span>ID:</span> <strong id="pokemon-id">#025 • PIKACHU</strong></p>
-              <p><span>MODE:</span> OPTIC-CAPTURE</p>
-            </div>
+            <p class="nav-current">
+              <span id="previousPokemon">---</span>
+              <span aria-hidden="true">|</span>
+              <span id="nextPokemon">---</span>
+            </p>
 
-            <div class="cry-readout">
-              <span class="material-icons" aria-hidden="true">graphic_eq</span>
-              CRY SYNTH:
-              <span id="cry-meter">▮▮▯▯▯▯</span>
-            </div>
+            <button
+              id="next"
+              class="nav-button"
+              type="button"
+              aria-label="Pokémon siguiente"
+            >
+              ▶
+            </button>
+          </div>
 
-            <div class="pokemon-selector">
-              <button id="previous-button" type="button" class="lcd-control">
-                <span class="material-icons" aria-hidden="true">arrow_back</span>
-                <span id="previous-name">024 ARBOK</span>
-              </button>
-
-              <button id="next-button" type="button" class="lcd-control">
-                <span id="next-name">026 RAICHU</span>
-                <span class="material-icons" aria-hidden="true">arrow_forward</span>
-              </button>
-            </div>
-          </section>
-
-          <div class="speaker-grille" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
+          <div class="cry-readout">
+            <span>CRY SYNTH:</span>
+            <span class="cry-bars" aria-hidden="true">▮▮▯▯▯▯</span>
           </div>
         </div>
 
         <div class="left-controls">
-          <div class="dpad" aria-label="Control direccional">
-            <button type="button" class="dpad-button dpad-up" aria-label="Arriba">
-              <span class="material-icons" aria-hidden="true">arrow_drop_up</span>
-            </button>
-            <button type="button" class="dpad-button dpad-left" aria-label="Izquierda">
-              <span class="material-icons" aria-hidden="true">arrow_left</span>
-            </button>
-            <button type="button" class="dpad-button dpad-center" aria-label="Seleccionar"></button>
-            <button type="button" class="dpad-button dpad-right" aria-label="Derecha">
-              <span class="material-icons" aria-hidden="true">arrow_right</span>
-            </button>
-            <button type="button" class="dpad-button dpad-down" aria-label="Abajo">
-              <span class="material-icons" aria-hidden="true">arrow_drop_down</span>
-            </button>
+          <div class="dpad" aria-hidden="true">
+            <span class="dpad-up">▲</span>
+            <span class="dpad-left">◀</span>
+            <span class="dpad-center"></span>
+            <span class="dpad-right">▶</span>
+            <span class="dpad-down">▼</span>
           </div>
 
           <div class="action-buttons">
-            <button class="round-button round-button--a" type="button">A</button>
-            <button class="round-button round-button--b" type="button">B</button>
+            <button id="voiceButton" type="button" class="action-button">A</button>
+            <button id="cryButton" type="button" class="action-button">B</button>
           </div>
         </div>
       </article>
 
-      <div class="hinge" aria-hidden="true">
+      <div class="pokedex-hinge" aria-hidden="true">
         <span></span>
         <span></span>
         <span></span>
       </div>
 
-      <article class="pokedex-panel pokedex-panel--right">
-        <div class="right-panel-header">
-          <p>INFO / CRYO</p>
+      <article class="pokedex-panel pokedex-panel-right">
+        <div class="panel-topline">
+          <span>SENSOR CLUSTER AND LOGO</span>
           <span>ARCHIVE SLOT: 01</span>
         </div>
 
-        <section class="lcd lcd--data">
-          <header class="data-heading">
-            <p id="data-pokemon-id">025</p>
-            <h2 id="data-pokemon-name">PIKACHU</h2>
-            <span id="pokemon-types">ELÉCTRICO</span>
+        <div class="lcd-screen lcd-screen-secondary">
+          <header class="pokemon-summary">
+            <p class="screen-label">ID:</p>
+            <h2 id="pokemonHeaderTitle">#025 • PIKACHU</h2>
+            <p class="screen-mode">INFO / CRYO</p>
           </header>
 
-          <dl class="spec-grid">
+          <section class="pokemon-basic-data" aria-label="Datos básicos">
             <div>
-              <dt>ESPECIE</dt>
-              <dd id="pokemon-species">POKÉMON RATÓN</dd>
+              <span>ALTURA</span>
+              <strong id="altura">0.4 M</strong>
             </div>
             <div>
-              <dt>ALTURA</dt>
-              <dd id="pokemon-height">0.4 m</dd>
+              <span>PESO</span>
+              <strong id="peso">6.0 KG</strong>
             </div>
             <div>
-              <dt>PESO</dt>
-              <dd id="pokemon-weight">6.0 kg</dd>
+              <span>GÉNERO</span>
+              <strong id="sexo">♂ / ♀</strong>
             </div>
-          </dl>
+            <div>
+              <span>ESPECIE</span>
+              <strong id="categoria">RATÓN</strong>
+            </div>
+          </section>
 
-          <section class="dex-entry">
-            <p class="entry-label">
-              <span class="material-icons" aria-hidden="true">database</span>
-              REGISTRO OFICIAL KANTO:
-            </p>
-            <blockquote id="pokemon-description">
-              “Cuando varios de estos POKÉMON se juntan, su electricidad puede acumularse y causar tormentas eléctricas con relámpagos.”
+          <section class="pokemon-type-section">
+            <p>TIPO:</p>
+            <div id="tipo" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-ability-section">
+            <p>HABILIDADES:</p>
+            <div id="habilidad" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-weakness-section">
+            <p>DEBILIDADES:</p>
+            <div id="debilidad" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-description-section">
+            <p>REGISTRO OFICIAL KANTO:</p>
+            <blockquote id="pokemonDescription">
+              CARGANDO REGISTRO…
             </blockquote>
           </section>
 
-          <section class="stat-list" aria-label="Estadísticas base">
-            <div class="stat-row">
-              <span>PS (HP)</span>
-              <strong id="stat-hp">35</strong>
-              <span id="bar-hp" class="pixel-bar">■■■□□□□□□□</span>
-            </div>
-            <div class="stat-row">
-              <span>ATAQUE</span>
-              <strong id="stat-attack">55</strong>
-              <span id="bar-attack" class="pixel-bar">■■■■■□□□□□</span>
-            </div>
-            <div class="stat-row">
-              <span>DEFENSA</span>
-              <strong id="stat-defense">40</strong>
-              <span id="bar-defense" class="pixel-bar">■■■■□□□□□□</span>
-            </div>
-            <div class="stat-row">
-              <span>VELOCIDAD</span>
-              <strong id="stat-speed">90</strong>
-              <span id="bar-speed" class="pixel-bar">■■■■■■■■□□</span>
-            </div>
+          <section class="pokemon-stats-section">
+            <p>TELEMETRÍA BASE:</p>
+            <div id="pokemonStats" class="pokemon-stats"></div>
           </section>
-        </section>
+        </div>
 
         <section class="keypad-section" aria-label="Matriz de acceso numérico">
           <p>MATRIZ DE ACCESO DIRECTO NUMÉRICO</p>
 
           <div class="keypad">
-            <button class="key key--function" type="button">C</button>
-            <button class="key key--function" type="button">E</button>
-            <button class="key" type="button">1</button>
-            <button class="key" type="button">2</button>
-            <button class="key" type="button">3</button>
-            <button class="key" type="button">4</button>
-            <button class="key" type="button">5</button>
-            <button class="key" type="button">6</button>
-            <button class="key" type="button">7</button>
-            <button class="key" type="button">8</button>
-            <button class="key" type="button">9</button>
-            <button class="key key--wide" type="button">0</button>
+            <button type="button" class="keypad-button keypad-action" data-keypad-action="clear">
+              C
+            </button>
+            <button type="button" class="keypad-button keypad-action" data-keypad-action="enter">
+              E
+            </button>
+
+            <button type="button" class="keypad-button" data-pokemon-number="1">1</button>
+            <button type="button" class="keypad-button" data-pokemon-number="2">2</button>
+            <button type="button" class="keypad-button" data-pokemon-number="3">3</button>
+            <button type="button" class="keypad-button" data-pokemon-number="4">4</button>
+            <button type="button" class="keypad-button" data-pokemon-number="5">5</button>
+            <button type="button" class="keypad-button" data-pokemon-number="6">6</button>
+            <button type="button" class="keypad-button" data-pokemon-number="7">7</button>
+            <button type="button" class="keypad-button" data-pokemon-number="8">8</button>
+            <button type="button" class="keypad-button" data-pokemon-number="9">9</button>
+            <button type="button" class="keypad-button keypad-zero" data-pokemon-number="0">0</button>
           </div>
         </section>
-
-        <footer class="panel-footer">
-          <span>CATÁLOGO REGIONAL (#001–#151)</span>
-          <strong id="catalog-count">151 ESPECÍMENES</strong>
-        </footer>
       </article>
     </section>
 
     <footer class="system-footer">
-      <p>
-        <span class="status-dot"></span>
-        DEX VOICE ACTIVE
-      </p>
-      <p>REGISTERED <strong>151 / 151</strong></p>
-      <p>KANTO INDEX // SILPH CO. PROF. OAK LABS</p>
-      <p>SYS VER 1.0.4-JP</p>
+      <span>CATÁLOGO REGIONAL #001–#1025</span>
+      <span>DEX VOICE ACTIVE</span>
+      <span>PROF. OAK LABS</span>
+      <span>SYS VER 1.0.4-JP</span>
     </footer>
   </main>
 
-  <script src="./scripts.js"></script>
+  <script type="module" src="./scripts.js"></script>
 </body>
 </html>
