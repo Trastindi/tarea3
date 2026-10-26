@@ -127,20 +127,13 @@ img {
 .screen-mode,
 .filter-label,
 .search-help,
-<<<<<<< HEAD
-=======
-.keypad-section > p,
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 .system-footer,
 .pokemon-basic-data span,
 .pokemon-type-section > p,
 .pokemon-ability-section > p,
 .pokemon-weakness-section > p,
 .pokemon-description-section > p,
-<<<<<<< HEAD
 .pokemon-moves-section > p,
-=======
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 .pokemon-stats-section > p {
   margin: 0;
   font-family: var(--font-system);
@@ -150,14 +143,11 @@ img {
   text-transform: uppercase;
 }
 
-<<<<<<< HEAD
 .pokemon-moves-section{
   max-height: 90px;
   overflow-y: auto;
 }
 
-=======
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 /* -------------------------------------------------------------------------- */
 /* Cabecera                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -842,10 +832,7 @@ img {
 }
 
 .pokemon-type-section,
-<<<<<<< HEAD
 .pokemon-moves-section,
-=======
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 .pokemon-ability-section,
 .pokemon-weakness-section,
 .pokemon-description-section,
@@ -856,10 +843,7 @@ img {
 }
 
 .pokemon-type-section > p,
-<<<<<<< HEAD
 .pokemon-moves-section > p,
-=======
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 .pokemon-ability-section > p,
 .pokemon-weakness-section > p,
 .pokemon-description-section > p,
@@ -877,10 +861,7 @@ img {
 
 .type-tag,
 .ability-tag,
-<<<<<<< HEAD
 .move-tag,
-=======
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 .weakness-tag {
   display: inline-flex;
   align-items: center;
@@ -992,77 +973,6 @@ img {
 }
 
 /* -------------------------------------------------------------------------- */
-<<<<<<< HEAD
-=======
-/* Teclado                                                                     */
-/* -------------------------------------------------------------------------- */
-
-.keypad-section {
-  margin-top: 1rem;
-  padding: 0.55rem;
-  border: 2px solid var(--crimson-dark);
-  border-radius: 4px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 40%),
-    #bf071f;
-  box-shadow:
-    inset 2px 2px 0 rgba(255, 255, 255, 0.24),
-    inset -2px -2px 0 rgba(91, 0, 0, 0.42);
-}
-
-.keypad-section > p {
-  margin-bottom: 0.52rem;
-  color: #ffdedc;
-  text-align: center;
-}
-
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.42rem;
-}
-
-.keypad-button {
-  min-height: 2.15rem;
-  border: 1px solid var(--button-blue-dark);
-  border-bottom: 4px solid #0e4b73;
-  border-radius: var(--control-radius);
-  color: #e9f9ff;
-  font-family: var(--font-system);
-  font-size: 0.78rem;
-  font-weight: 700;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 34%),
-    var(--button-blue);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.38),
-    0 2px 0 rgba(90, 0, 0, 0.26);
-}
-
-.keypad-button:hover {
-  filter: brightness(1.12);
-}
-
-.keypad-button:active {
-  transform: translateY(3px);
-  border-bottom-width: 1px;
-}
-
-.keypad-action {
-  color: #352700;
-  border-color: #ab8300;
-  border-bottom-color: #7b5d00;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.35), transparent 34%),
-    var(--button-yellow);
-}
-
-.keypad-zero {
-  grid-column: 2;
-}
-
-/* -------------------------------------------------------------------------- */
->>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 /* Pie                                                                         */
 /* -------------------------------------------------------------------------- */
 
