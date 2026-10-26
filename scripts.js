@@ -86,7 +86,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const weaknessesContainer = getById("debilidad");
   const description = getById("pokemonDescription");
   const statsContainer = getById("pokemonStats");
+<<<<<<< HEAD
   const movesContainer = getById("moves")
+=======
+>>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 
   const previousLabel = getById("previousPokemon");
   const nextLabel = getById("nextPokemon");
@@ -258,7 +261,10 @@ window.addEventListener("DOMContentLoaded", () => {
       const types = pokemon.types.map((item) => item.type.name);
       const abilities = pokemon.abilities.map((item) => item.ability.name);
       const weaknesses = await calculateWeaknesses(pokemon.types);
+<<<<<<< HEAD
       const moves = pokemon.moves.map((item) => item.move.name);
+=======
+>>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
 
       if (title) title.textContent = displayTitle;
       if (headerTitle) headerTitle.textContent = displayTitle;
@@ -277,7 +283,10 @@ window.addEventListener("DOMContentLoaded", () => {
       renderTags(typesContainer, types, "type");
       renderTags(abilitiesContainer, abilities, "ability");
       renderTags(weaknessesContainer, weaknesses, "weakness");
+<<<<<<< HEAD
       renderTags(movesContainer, moves, "move")
+=======
+>>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
       renderStats(pokemon.stats);
 
       if (input) {
@@ -315,6 +324,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+<<<<<<< HEAD
   window.addEventListener("keydown", (event) => {
     switch (event.key){
       case "ArrowLeft":
@@ -335,6 +345,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   })
 
+=======
+>>>>>>> 03aa0c910448705fc7e3003ed55c3ceeafaa4232
   previousButton?.addEventListener("click", (event) => {
     event.preventDefault();
 
