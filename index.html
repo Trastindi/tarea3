@@ -1,121 +1,216 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="./styles.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Kanto OS: una Pokédex retro que consulta datos desde PokéAPI."
+  />
+  <title>Kanto OS · Pokédex</title>
+
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body>
-    <header>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <h1>Pokedex</h1>
-                </div>
-            </div>
-        </div>
+  <main class="kanto-os" aria-label="Pokédex Kanto OS">
+    <header class="system-header">
+      <div class="sensor-cluster" aria-label="Indicadores del sistema">
+        <span class="sensor sensor-main" aria-hidden="true"></span>
+        <span class="sensor sensor-red" aria-hidden="true"></span>
+        <span class="sensor sensor-yellow" aria-hidden="true"></span>
+        <span class="sensor sensor-green" aria-hidden="true"></span>
+      </div>
+
+      <div class="system-identification">
+        <p class="eyebrow">REPLICATOR UNIT // DUAL-BUS ARCH</p>
+        <h1>KANTO OS <span>•</span> HANDY909</h1>
+        <p class="system-subtitle">SCAN-CAM MATRIX</p>
+      </div>
+
+      <p id="pokemonStatus" class="system-status" aria-live="polite">
+        SISTEMA LISTO
+      </p>
     </header>
-    <main>
-        <div class="container">
-            <div class="row">
-                <div class="col-4">
-                    <button id="back">Atras</button>
-                </div>
-                <div class="col-4">
-                    <form class="container" id="form1">
-                        <input type="text" name="pokemonId" id="pokemonId"/>
-                        <button type="submit">Buscar</button>
 
-                    </form>
-                </div>
-                <div class="col-4">
-                    <button id="next">Siguiente</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-4 offset-4">
-                    <h1 id="pokemonName" class="text-center">Nombre Pokemon</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <img id="pokemonSprite" style="height: 430px; width: 430px;" src="" alt="">
-                    <div class="row">
-                        <div class="stats-card">
-                            <h3>Puntos de base</h3>
+    <section class="search-console" aria-label="Buscar Pokémon">
+      <form id="pokemonForm" class="pokemon-search-form">
+        <label class="sr-only" for="pokemonId">Número o nombre de Pokémon</label>
 
-                            <div id="pokemonStats" class="pokemon-stats"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="row">
-                        <p id="pokemonDescription">
-                        </p>
-                    </div>
-                    <div class="row">
-                        <p class="col-2">Version: </p>
-                        <div class="col-10">
-                            <input type="radio" id="version" name="drone" value="0" checked />
-                            <label for="huey">
-                                <img src="./img/pokeball_red.png" alt="" style="height: 30px; width: 30px;">
-                            </label>
-                            <input type="radio" id="version" name="drone" value="1" />
-                            <label for="blue">
-                                <img src="./img/pokeball_blue.png" alt="" style="height: 30px; width: 30px;">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row data-card">
-                        <div class="col-6">
-                            <ul class="no-style-list">
-                                <li>
-                                    <span class="text-white attribute-title">Altura</span>
-                                    <span id="altura" class="attribute-value"></span>
-                                </li>
-                                <li>
-                                    <span class="text-white attribute-title">Peso</span>
-                                    <span id="peso" class="attribute-value"></span>
-                                </li>
-                                <li>
-                                    <span class="text-white attribute-title">Sexo</span>
-                                    <span id="sexo" class="attribute-value"></span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-6">
-                            <ul class="no-style-list">
-                                <li>
-                                    <span class="text-white attribute-title">Categoría</span>
-                                    <span id="categoria" class="attribute-value"></span>
-                                </li>
-                                <li>
-                                    <span class="text-white attribute-title">Habilidad</span>
-                                    <div class="col-12" id="habilidad"></div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div>
-                        <span>Tipo</span>
-                        <div id="tipo" class="row">
-                        </div>
+        <input
+          id="pokemonId"
+          class="pokemon-search-input"
+          name="pokemon"
+          type="search"
+          inputmode="numeric"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="ID / NOMBRE"
+          aria-describedby="searchHelp"
+        />
 
-                        <span>Debilidades</span>
-                        <div id="debilidad" class="row">
+        <button type="submit" class="search-button">
+          BUSCAR
+        </button>
+      </form>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <span id="searchHelp" class="search-help">
+        INTRODUCE UN ID DEL 1 AL 1025 O UN NOMBRE
+      </span>
+    </section>
+
+    <section class="pokedex-shell" aria-label="Ficha del Pokémon">
+      <article class="pokedex-panel pokedex-panel-left">
+        <div class="panel-topline">
+          <span>REPLICATOR UNIT // DUAL-BUS ARCH</span>
+          <span>SCAN-CAM MATRIX</span>
         </div>
-    </main>
-    <footer>
-        <script type="module" src="./scripts.js"></script>
-    </footer>
-</body>
 
+        <div class="lcd-screen lcd-screen-primary">
+          <div class="screen-heading">
+            <p class="screen-label">ID:</p>
+            <h2 id="pokemonTitle">#025 • PIKACHU</h2>
+            <p class="screen-mode">MODE: OPTIC-CAPTURE</p>
+          </div>
+
+          <div class="sprite-frame">
+            <img
+              id="pokemonSprite"
+              class="pokemon-sprite"
+              src=""
+              alt="Ilustración del Pokémon seleccionado"
+            />
+          </div>
+
+          <div class="sprite-navigation" aria-label="Navegación de Pokémon">
+            <button
+              id="back"
+              class="nav-button"
+              type="button"
+              aria-label="Pokémon anterior"
+            >
+              ◀
+            </button>
+
+            <p class="nav-current">
+              <span id="previousPokemon">---</span>
+              <span aria-hidden="true">|</span>
+              <span id="nextPokemon">---</span>
+            </p>
+
+            <button
+              id="next"
+              class="nav-button"
+              type="button"
+              aria-label="Pokémon siguiente"
+            >
+              ▶
+            </button>
+          </div>
+
+          <div class="cry-readout">
+            <span>CRY SYNTH:</span>
+            <span class="cry-bars" aria-hidden="true">▮▮▯▯▯▯</span>
+          </div>
+        </div>
+
+        <div class="left-controls">
+          <div class="dpad" aria-hidden="true">
+            <span class="dpad-up">▲</span>
+            <span class="dpad-left">◀</span>
+            <span class="dpad-center"></span>
+            <span class="dpad-right">▶</span>
+            <span class="dpad-down">▼</span>
+          </div>
+
+          <div class="action-buttons">
+            <button id="voiceButton" type="button" class="action-button">A</button>
+            <button id="cryButton" type="button" class="action-button">B</button>
+          </div>
+        </div>
+      </article>
+
+      <div class="pokedex-hinge" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <article class="pokedex-panel pokedex-panel-right">
+        <div class="panel-topline">
+          <span>SENSOR CLUSTER AND LOGO</span>
+          <span>ARCHIVE SLOT: 01</span>
+        </div>
+
+        <div class="lcd-screen lcd-screen-secondary">
+          <header class="pokemon-summary">
+            <p class="screen-label">ID:</p>
+            <h2 id="pokemonHeaderTitle">#025 • PIKACHU</h2>
+            <p class="screen-mode">INFO / CRYO</p>
+          </header>
+
+          <section class="pokemon-basic-data" aria-label="Datos básicos">
+            <div>
+              <span>ALTURA</span>
+              <strong id="altura">0.4 M</strong>
+            </div>
+            <div>
+              <span>PESO</span>
+              <strong id="peso">6.0 KG</strong>
+            </div>
+            <div>
+              <span>GÉNERO</span>
+              <strong id="sexo">♂ / ♀</strong>
+            </div>
+            <div>
+              <span>ESPECIE</span>
+              <strong id="categoria">RATÓN</strong>
+            </div>
+          </section>
+
+          <section class="pokemon-type-section">
+            <p>TIPO:</p>
+            <div id="tipo" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-ability-section">
+            <p>HABILIDADES:</p>
+            <div id="habilidad" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-weakness-section">
+            <p>DEBILIDADES:</p>
+            <div id="debilidad" class="pokemon-tags"></div>
+          </section>
+
+          <section class="pokemon-description-section">
+            <p>REGISTRO OFICIAL KANTO:</p>
+            <blockquote id="pokemonDescription">
+              CARGANDO REGISTRO…
+            </blockquote>
+          </section>
+
+          <section class="pokemon-stats-section">
+            <p>TELEMETRÍA BASE:</p>
+            <div id="pokemonStats" class="pokemon-stats"></div>
+          </section>
+
+          <section class="pokemon-moves-section">
+            <p>MOVIMIENTOS:</p>
+            <div id="moves" class="pokemon-tags"></div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    <footer class="system-footer">
+      <span>CATÁLOGO REGIONAL #001–#1025</span>
+      <span>DEX VOICE ACTIVE</span>
+      <span>PROF. OAK LABS</span>
+      <span>SYS VER 1.0.4-JP</span>
+    </footer>
+  </main>
+
+  <script type="module" src="./scripts.js"></script>
+</body>
 </html>
